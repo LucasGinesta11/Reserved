@@ -11,15 +11,15 @@ interface EstablishmentApi {
     @GET("/reservas/establecimientos")
     suspend fun getEstablishments(): List<Establishment>
 
-    @GET("/reservas/favorites")
+    @GET("/reservas/favoritos")
     suspend fun getFavorites(): List<FavoriteRequest>
 
-    @POST("favorites")
+    @POST("/reservas/favoritos")
     suspend fun addFavorite(
         @Body favoriteRequest: FavoriteRequest
     )
 
-    @DELETE("favorites/{id}")
+    @DELETE("/reservas/favoritos/{id}")
     suspend fun removeFavorite(
         @Path("id") establishmentId: Int
     )

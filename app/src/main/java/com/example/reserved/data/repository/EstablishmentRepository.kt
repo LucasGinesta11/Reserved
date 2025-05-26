@@ -1,7 +1,6 @@
 package com.example.reserved.data.repository
 
 import com.example.reserved.data.model.Establishment
-import com.example.reserved.data.remote.EstablishmentApi
 import com.example.reserved.data.remote.FavoriteRequest
 import com.example.reserved.data.remote.RetrofitInstance
 
@@ -13,7 +12,6 @@ class EstablishmentRepository(token: String?) {
     }
 
     suspend fun getFavorites(): List<FavoriteRequest> {
-        // Llamada al endpoint que devuelve establecimientos + favoritos del usuario
         return api.getFavorites()
     }
 

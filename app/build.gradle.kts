@@ -69,6 +69,18 @@ dependencies {
     // Navegacion
     implementation ("androidx.navigation:navigation-compose:2.5.3")
 
+    // Compose Material 3
+    implementation ("androidx.compose.material3:material3:1.1.0")  // Ajusta versión si tienes otra
+
+    // Icons for Material
+    implementation ("androidx.compose.material:material-icons-extended:1.4.3")
+
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+    // Corrutinas
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

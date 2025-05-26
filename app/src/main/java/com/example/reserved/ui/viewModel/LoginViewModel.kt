@@ -14,32 +14,30 @@ class LoginViewModel : ViewModel() {
     var errorMessage = mutableStateOf<String?>(null)
     var isLoading = mutableStateOf(false)
 
-    val authToken = mutableStateOf<String?>(null)
+    private val repository = UserRepository
 
-    fun onLoginClick(onSuccess: () -> Unit) {
-        if (username.value.isBlank() || password.value.isBlank()) {
-            errorMessage.value = "Rellena todos los campos"
-            return
-        }
-
+    fun onLoginClick(onSuccess: (String) -> Unit) {
         viewModelScope.launch {
             isLoading.value = true
             try {
-                val response = UserRepository.login(username.value, password.value)
+                val response = repository.login(username.value, password.value)
                 if (response.isSuccessful) {
-                    val body = response.body()
-                    authToken.value = body?.token
-                    println("TOKEN RECIBIDO: ${body?.token}")
-                    onSuccess()
+                    val token = response.body()?.token
+                    if (!token.isNullOrBlank()) {
+                        onSuccess(token)
+                    } else {
+                        errorMessage.value = "Token vacío o nulo"
+                    }
                 } else {
-                    errorMessage.value = "Error de autenticación (${response.code()})"
+                    errorMessage.value = "Error: ${response.message()}"
                 }
             } catch (e: Exception) {
-                errorMessage.value = "Error de red: ${e.localizedMessage}"
+                errorMessage.value = "Login fallido: ${e.message}"
             } finally {
                 isLoading.value = false
             }
         }
     }
+
 }
 

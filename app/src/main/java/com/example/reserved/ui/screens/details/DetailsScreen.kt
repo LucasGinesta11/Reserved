@@ -1,71 +1,135 @@
 package com.example.reserved.ui.screens.details
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.reserved.data.model.Establishment
+import androidx.core.net.toUri
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsScreen(
     establishment: Establishment,
+    modifier: Modifier = Modifier,
     navController: NavController
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = establishment.nombre) }
-            )
-        }
-    ) { padding ->
-        Column(
+    val context = LocalContext.current
+    var showDialog by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Card(
             modifier = Modifier
-                .padding(padding)
-                .padding(16.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .fillMaxWidth()
+                .height(220.dp),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(8.dp)
         ) {
             Image(
                 painter = rememberAsyncImagePainter(establishment.imagenUrl),
                 contentDescription = "Imagen del establecimiento",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(16.dp))
             )
+        }
 
-            Text("Tipo: ${establishment.tipo}", fontSize = 18.sp)
-            Text("Dirección: ${establishment.direccion}", fontSize = 18.sp)
-            Text("Teléfono: ${establishment.telefono}", fontSize = 18.sp)
-            Text("Descripción:", fontWeight = FontWeight.Bold)
-            Text(establishment.descripcion, fontSize = 16.sp)
-            Text("Valoración: ${establishment.valoracion}/5", fontSize = 18.sp)
+        Spacer(modifier = Modifier.height(16.dp))
 
-            Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = establishment.nombre,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text("Tipo: ${establishment.tipo}", fontSize = 16.sp)
+        Text("Dirección: ${establishment.direccion}", fontSize = 16.sp)
+        Text("Teléfono: ${establishment.telefono}", fontSize = 16.sp)
+        Text("Valoración: ${establishment.rating}/5", fontSize = 16.sp)
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = "Descripción",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Text(
+            text = establishment.descripcion,
+            fontSize = 14.sp,
+            modifier = Modifier.padding(top = 4.dp)
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(
+                onClick = { showDialog = true },
+                shape = RoundedCornerShape(10.dp)
             ) {
-                Button(onClick = {
-                    // Aquí irá la lógica de reservar
-                }) {
-                    Text("Reservar")
-                }
+                Text("Reservar")
+            }
 
-                OutlinedButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Text("Volver")
-                }
+            OutlinedButton(
+                onClick = { navController.popBackStack() },
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text("Volver")
             }
         }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("¿Cómo quieres reservar?") },
+            text = { Text("Elige una opción para contactar con el establecimiento.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    val intent = Intent(Intent.ACTION_DIAL).apply {
+                        data = "tel:${establishment.telefono}".toUri()
+                    }
+                    context.startActivity(intent)
+                    showDialog = false
+                }) {
+                    Text("Llamar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    val gmmIntentUri = "geo:0,0?q=${Uri.encode(establishment.direccion)}".toUri()
+                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri).apply {
+                        setPackage("com.google.android.apps.maps")
+                    }
+                    context.startActivity(mapIntent)
+                    showDialog = false
+                }) {
+                    Text("Google Maps")
+                }
+            }
+        )
     }
 }

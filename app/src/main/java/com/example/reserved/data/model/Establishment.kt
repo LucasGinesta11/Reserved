@@ -7,7 +7,9 @@ data class Establishment(
     val direccion: String,
     val telefono: Int,
     val descripcion: String,
-    val valoracion: Float,
+    val rating: Double,
     val imagenUrl: String,
-    var isFavorite: Boolean = false
+    var isFavorite: Boolean = false,
+    val length: Double,
+    val latitude: Double
 )

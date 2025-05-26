@@ -2,13 +2,15 @@ package com.example.reserved.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.reserved.data.model.Establishment
 import com.example.reserved.data.repository.EstablishmentRepository
 import com.example.reserved.ui.state.EstablishmentUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class EstablishmentViewModel(
     private val repository: EstablishmentRepository
@@ -48,7 +50,6 @@ class EstablishmentViewModel(
         }
     }
 
-
     fun toggleFavorite(establishmentId: Long) {
         val currentState = _state.value
         if (currentState is EstablishmentUiState.Success) {
@@ -67,11 +68,59 @@ class EstablishmentViewModel(
                         repository.removeFavorite(establishmentId.toInt())
                     }
                 } catch (e: Exception) {
-                    // Opcional: revertir el cambio o mostrar error
+                    e.message
                 }
             }
         }
     }
 
+    fun sortByName() {
+        val currentState = _state.value
+        if (currentState is EstablishmentUiState.Success) {
+            val sorted = currentState.establishments.sortedBy { it.nombre.lowercase() }
+            _state.value = EstablishmentUiState.Success(sorted)
+        }
+    }
+
+    fun sortByEstablishment() {
+        val currentState = _state.value
+        if (currentState is EstablishmentUiState.Success) {
+            val sorted = currentState.establishments.sortedBy { it.tipo.lowercase() }
+            _state.value = EstablishmentUiState.Success(sorted)
+        }
+    }
+
+    fun sortByProximity(userLat: Double, userLon: Double) {
+        val currentState = _state.value
+        if (currentState is EstablishmentUiState.Success) {
+            val sorted = currentState.establishments.sortedBy { est ->
+                distanceBetween(userLat, userLon, est.latitude, est.length)
+            }
+            _state.value = EstablishmentUiState.Success(sorted)
+        }
+    }
+
+
+
+    private fun distanceBetween(
+        lat1: Double, lon1: Double,
+        lat2: Double, lon2: Double
+    ): Double {
+        val R = 6371e3 // radio Tierra en metros
+        val phi1 = Math.toRadians(lat1)
+        val phi2 = Math.toRadians(lat2)
+        val deltaPhi = Math.toRadians(lat2 - lat1)
+        val deltaLambda = Math.toRadians(lon2 - lon1)
+
+        val a = sin(deltaPhi / 2) * sin(deltaPhi / 2) +
+                cos(phi1) * cos(phi2) *
+                sin(deltaLambda / 2) * sin(deltaLambda / 2)
+
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        val distance = R * c
+
+        return distance
+    }
 
 }
