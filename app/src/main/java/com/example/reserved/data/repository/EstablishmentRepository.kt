@@ -1,8 +1,8 @@
 package com.example.reserved.data.repository
 
 import com.example.reserved.data.model.Establishment
-import com.example.reserved.data.remote.FavoriteRequest
-import com.example.reserved.data.remote.RetrofitInstance
+import com.example.reserved.data.remote.network.RetrofitInstance
+import com.example.reserved.data.remote.request.FavoriteRequest
 
 class EstablishmentRepository(token: String?) {
     private val api = RetrofitInstance.getApi(token)
@@ -17,8 +17,7 @@ class EstablishmentRepository(token: String?) {
 
 
     suspend fun addFavorite(establishmentId: Int) {
-        println("Añadiendo favorito: $establishmentId")
-        return api.addFavorite(FavoriteRequest(establishmentId))
+        api.addFavorite(FavoriteRequest(establishment_id = establishmentId))
     }
 
     suspend fun removeFavorite(establishmentId: Int) {

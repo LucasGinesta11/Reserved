@@ -36,7 +36,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.reserved.data.model.Establishment
 import com.example.reserved.data.repository.SelectedEstablishment
 import com.example.reserved.ui.state.EstablishmentUiState
-import com.example.reserved.ui.viewModel.EstablishmentViewModel
+import com.example.reserved.ui.viewModel.establishment.EstablishmentViewModel
 
 @Composable
 fun EstablishmentScreen(viewModel: EstablishmentViewModel, modifier: Modifier, navController: NavController) {
@@ -109,12 +109,12 @@ fun EstablishmentCard(
     ) {
         Box {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = establishment.nombre, style = MaterialTheme.typography.titleLarge)
+                Text(text = establishment.name, style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = establishment.direccion, style = MaterialTheme.typography.bodyMedium)
+                Text(text = establishment.address, style = MaterialTheme.typography.bodyMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 Image(
-                    painter = rememberAsyncImagePainter(establishment.imagenUrl),
+                    painter = rememberAsyncImagePainter(establishment.image),
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()

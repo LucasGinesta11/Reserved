@@ -14,8 +14,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.reserved.data.SessionManager
-import com.example.reserved.data.remote.LocationUtils
+import com.example.reserved.data.session.SessionManager
+import com.example.reserved.data.remote.utils.LocationUtils
 import com.example.reserved.data.repository.EstablishmentRepository
 import com.example.reserved.data.repository.SelectedEstablishment
 import com.example.reserved.ui.MainLayout
@@ -26,12 +26,15 @@ import com.example.reserved.ui.screens.login.LoginScreen
 import com.example.reserved.ui.screens.register.RegisterScreen
 import com.example.reserved.ui.screens.reserves.ReservesScreen
 import com.example.reserved.ui.screens.settings.SettingsScreen
-import com.example.reserved.ui.viewModel.EstablishmentViewModel
-import com.example.reserved.ui.viewModel.EstablishmentViewModelFactory
+import com.example.reserved.ui.viewModel.establishment.EstablishmentViewModel
+import com.example.reserved.ui.viewModel.establishment.EstablishmentViewModelFactory
 import com.example.reserved.ui.viewModel.LoginViewModel
 import android.Manifest
 import android.util.Log
 import androidx.compose.runtime.rememberCoroutineScope
+import com.example.reserved.data.repository.UserRepository
+import com.example.reserved.ui.viewModel.user.UserViewModel
+import com.example.reserved.ui.viewModel.user.UserViewModelFactory
 import kotlinx.coroutines.launch
 
 @Composable
@@ -45,6 +48,16 @@ fun Navigation() {
         val factory = remember(tokenState.value) { EstablishmentViewModelFactory(repository) }
         viewModel(factory = factory)
     } else null
+
+    val userViewModel = if (!tokenState.value.isNullOrEmpty()) {
+        val userRepository = remember(tokenState.value) { UserRepository(tokenState.value!!) }
+        val userFactory = remember(tokenState.value) { UserViewModelFactory(userRepository) }
+        viewModel<UserViewModel>(factory = userFactory)
+    } else null
+
+    val userId = SessionManager.userId
+
+
 
     NavHost(navController = navController, startDestination = "login") {
         composable("login") {
@@ -116,7 +129,6 @@ fun Navigation() {
             }
         }
 
-
         composable("favorites") {
             if (viewModel != null) {
                 MainLayout(navController, title = "Favoritos") { padding ->
@@ -142,7 +154,13 @@ fun Navigation() {
 
         composable("settings") {
             MainLayout(navController, title = "Ajustes") { padding ->
-                SettingsScreen(Modifier.padding(padding), navController)
+                userId?.let {
+                    SettingsScreen(
+                        modifier = Modifier.padding(padding),
+                        navController = navController,
+                        userViewModel = userViewModel
+                    )
+                }
             }
         }
     }

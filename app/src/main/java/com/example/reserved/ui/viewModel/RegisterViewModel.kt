@@ -3,6 +3,7 @@ package com.example.reserved.ui.viewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.reserved.data.repository.AuthRepository
 import com.example.reserved.data.repository.UserRepository
 import kotlinx.coroutines.launch
 
@@ -16,6 +17,8 @@ class RegisterViewModel : ViewModel() {
     var successMessage = mutableStateOf<String?>(null)
     var isLoading = mutableStateOf(false)
 
+    private val authRepository = AuthRepository()
+
     fun onRegisterClick() {
         if (username.value.isBlank() || password.value.isBlank() || email.value.isBlank()) {
             errorMessage.value = "Por favor, rellena todos los campos obligatorios"
@@ -23,7 +26,6 @@ class RegisterViewModel : ViewModel() {
             return
         }
 
-        // Validación básica teléfono como Int, puedes mejorarla
         val phoneInt = phone.value.toIntOrNull()
         if (phone.value.isNotBlank() && phoneInt == null) {
             errorMessage.value = "Teléfono inválido"
@@ -37,14 +39,14 @@ class RegisterViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                val response = UserRepository.register(
+                val response = authRepository.register(
                     username = username.value,
                     password = password.value,
                     email = email.value,
                     phone = phoneInt ?: 0
                 )
                 if (response.isSuccessful) {
-                    successMessage.value = response.body()?.message ?: "Usuario registrado con éxito"
+                    // Agregar Toast
                     errorMessage.value = null
                 } else {
                     errorMessage.value = "Error al registrar: ${response.code()} ${response.message()}"

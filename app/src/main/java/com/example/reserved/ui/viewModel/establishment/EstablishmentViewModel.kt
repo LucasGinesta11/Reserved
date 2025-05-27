@@ -1,4 +1,4 @@
-package com.example.reserved.ui.viewModel
+package com.example.reserved.ui.viewModel.establishment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,7 +31,7 @@ class EstablishmentViewModel(
                 val establishments = repository.getAllEstablishments()
 
                 val favorites = try {
-                    repository.getFavorites().map { it.establecimientoId.toLong() }
+                    repository.getFavorites().map { it.establishment_id.toLong() }
                 } catch (e: Exception) {
                     e.printStackTrace()
                     emptyList()
@@ -77,7 +77,7 @@ class EstablishmentViewModel(
     fun sortByName() {
         val currentState = _state.value
         if (currentState is EstablishmentUiState.Success) {
-            val sorted = currentState.establishments.sortedBy { it.nombre.lowercase() }
+            val sorted = currentState.establishments.sortedBy { it.name.lowercase() }
             _state.value = EstablishmentUiState.Success(sorted)
         }
     }
@@ -85,7 +85,7 @@ class EstablishmentViewModel(
     fun sortByEstablishment() {
         val currentState = _state.value
         if (currentState is EstablishmentUiState.Success) {
-            val sorted = currentState.establishments.sortedBy { it.tipo.lowercase() }
+            val sorted = currentState.establishments.sortedBy { it.type.lowercase() }
             _state.value = EstablishmentUiState.Success(sorted)
         }
     }
@@ -94,13 +94,11 @@ class EstablishmentViewModel(
         val currentState = _state.value
         if (currentState is EstablishmentUiState.Success) {
             val sorted = currentState.establishments.sortedBy { est ->
-                distanceBetween(userLat, userLon, est.latitude, est.length)
+                distanceBetween(userLat, userLon, est.latitude, est.longitude)
             }
             _state.value = EstablishmentUiState.Success(sorted)
         }
     }
-
-
 
     private fun distanceBetween(
         lat1: Double, lon1: Double,

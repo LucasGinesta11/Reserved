@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.reserved.ui.screens.home.EstablishmentCard
 import com.example.reserved.ui.state.EstablishmentUiState
-import com.example.reserved.ui.viewModel.EstablishmentViewModel
+import com.example.reserved.ui.viewModel.establishment.EstablishmentViewModel
 
 @Composable
 fun FavoritesScreen(viewModel: EstablishmentViewModel, modifier: Modifier, navController: NavController) {

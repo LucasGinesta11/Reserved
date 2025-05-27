@@ -1,7 +1,8 @@
-package com.example.reserved.data.remote
+package com.example.reserved.data.remote.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.tasks.await
@@ -15,7 +16,7 @@ object LocationUtils {
     }
 
     @SuppressLint("MissingPermission")
-    suspend fun getCurrentLocation(): android.location.Location? {
+    suspend fun getCurrentLocation(): Location? {
         return try {
             fusedLocationClient?.lastLocation?.await()
         } catch (e: Exception) {

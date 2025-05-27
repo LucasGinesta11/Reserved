@@ -1,4 +1,4 @@
-package com.example.reserved.data.remote
+package com.example.reserved.data.remote.interceptor
 
 import okhttp3.Interceptor
 import okhttp3.Response

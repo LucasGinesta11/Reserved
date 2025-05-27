@@ -2,14 +2,14 @@ package com.example.reserved.data.model
 
 data class Establishment(
     val id: Long,
-    val nombre: String,
-    val tipo: String,
-    val direccion: String,
-    val telefono: Int,
-    val descripcion: String,
+    val name: String,
+    val type: String,
+    val address: String,
+    val phone: Int,
+    val description: String,
     val rating: Double,
-    val imagenUrl: String,
+    val image: String,
     var isFavorite: Boolean = false,
-    val length: Double,
+    val longitude: Double,
     val latitude: Double
 )
