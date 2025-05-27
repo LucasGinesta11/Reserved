@@ -19,20 +19,24 @@ fun AccountSection(
     userViewModel: UserViewModel?
 ) {
     val context = LocalContext.current
-    var showDialog by remember { mutableStateOf(false) }
+    var showUsernameDialog by remember { mutableStateOf(false) }
     var newName by remember { mutableStateOf("") }
     val userId = SessionManager.userId
+
+    var showPasswordDialog by remember { mutableStateOf(false) }
+    var currentPassword by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
 
     SectionTitle("Cuenta")
 
     SettingsOption(
         title = "Cambiar nombre",
-        onClick = { showDialog = true }
+        onClick = { showUsernameDialog = true }
     )
 
     SettingsOption(
         title = "Cambiar contraseña",
-        onClick = { navController.navigate("settings/change-password") }
+        onClick = { showPasswordDialog = true }
     )
 
     SettingsOption(
@@ -40,7 +44,7 @@ fun AccountSection(
         onClick = { navController.navigate("login") }
     )
 
-    if (showDialog) {
+    if (showUsernameDialog) {
         ChangeUsername(
             newName = newName,
             onNewNameChange = { newName = it },
@@ -54,9 +58,37 @@ fun AccountSection(
                         ).show()
                     }
                 }
-                showDialog = false
+                showUsernameDialog = false
             },
-            onDismiss = { showDialog = false }
+            onDismiss = { showUsernameDialog = false }
+        )
+    }
+
+    if (showPasswordDialog) {
+        ChangePassword(
+            currentPassword = currentPassword,
+            onCurrentPasswordChange = { currentPassword = it },
+            newPassword = newPassword,
+            onNewPasswordChange = { newPassword = it },
+            onConfirm = {
+                userId?.let {
+                    userViewModel?.changePassword(it, currentPassword) { success ->
+                        Toast.makeText(
+                            context,
+                            if (success) "Contraseña actualizada" else "Error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                showPasswordDialog = false
+                currentPassword = ""
+                newPassword = ""
+            },
+            onDismiss = {
+                showPasswordDialog = false
+                currentPassword = ""
+                newPassword = ""
+            }
         )
     }
 }
