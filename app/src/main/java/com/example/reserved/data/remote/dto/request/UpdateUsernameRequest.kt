@@ -1,4 +1,4 @@
-package com.example.reserved.data.remote.request
+package com.example.reserved.data.remote.dto.request
 
 data class UpdateUsernameRequest(
     val username: String

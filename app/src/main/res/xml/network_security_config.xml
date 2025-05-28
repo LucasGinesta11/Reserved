@@ -4,3 +4,4 @@
         <domain includeSubdomains="true">reserved-env.eba-pr3h34mr.us-east-1.elasticbeanstalk.com</domain>
     </domain-config>
 </network-security-config>
+<!--Localhost: 10.0.2.2-->

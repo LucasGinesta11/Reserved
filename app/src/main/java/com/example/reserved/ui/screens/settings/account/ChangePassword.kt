@@ -13,8 +13,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ChangePassword(
-    currentPassword: String,
-    onCurrentPasswordChange: (String) -> Unit,
     newPassword: String,
     onNewPasswordChange: (String) -> Unit,
     onConfirm: () -> Unit,
@@ -25,7 +23,7 @@ fun ChangePassword(
         confirmButton = {
             Button(
                 onClick = onConfirm,
-                enabled = currentPassword.isNotBlank() && newPassword.isNotBlank()
+                enabled = newPassword.isNotBlank()
             ) {
                 Text("Guardar")
             }
@@ -39,20 +37,11 @@ fun ChangePassword(
         text = {
             Column(modifier = Modifier.padding(top = 8.dp)) {
                 OutlinedTextField(
-                    value = currentPassword,
-                    onValueChange = onCurrentPasswordChange,
-                    label = { Text("Contraseña actual") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
                     value = newPassword,
                     onValueChange = onNewPasswordChange,
                     label = { Text("Nueva contraseña") },
                     singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }

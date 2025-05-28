@@ -15,7 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.reserved.data.session.SessionManager
-import com.example.reserved.data.remote.utils.LocationUtils
+import com.example.reserved.data.utils.LocationUtils
 import com.example.reserved.data.repository.EstablishmentRepository
 import com.example.reserved.data.repository.SelectedEstablishment
 import com.example.reserved.ui.MainLayout
@@ -32,7 +32,7 @@ import com.example.reserved.ui.viewModel.LoginViewModel
 import android.Manifest
 import android.util.Log
 import androidx.compose.runtime.rememberCoroutineScope
-import com.example.reserved.data.repository.UserRepository
+import com.example.reserved.data.repository.AccountRepository
 import com.example.reserved.ui.viewModel.user.UserViewModel
 import com.example.reserved.ui.viewModel.user.UserViewModelFactory
 import kotlinx.coroutines.launch
@@ -50,14 +50,12 @@ fun Navigation() {
     } else null
 
     val userViewModel = if (!tokenState.value.isNullOrEmpty()) {
-        val userRepository = remember(tokenState.value) { UserRepository(tokenState.value!!) }
-        val userFactory = remember(tokenState.value) { UserViewModelFactory(userRepository) }
+        val accountRepository = remember(tokenState.value) { AccountRepository(tokenState.value!!) }
+        val userFactory = remember(tokenState.value) { UserViewModelFactory(accountRepository) }
         viewModel<UserViewModel>(factory = userFactory)
     } else null
 
     val userId = SessionManager.userId
-
-
 
     NavHost(navController = navController, startDestination = "login") {
         composable("login") {
@@ -110,7 +108,6 @@ fun Navigation() {
                     onSortByName = { viewModel.sortByName() },
                     onSortByEstablishment = { viewModel.sortByEstablishment() },
                     onSortByProximity = {
-                        // Lanzamos la petición de permisos cuando el usuario pulse el botón
                         locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                     }
                 ) { padding ->
@@ -140,15 +137,17 @@ fun Navigation() {
         composable("details") {
             MainLayout(navController, title = "Detalles") { padding ->
                 val establishment = SelectedEstablishment.current
-                if (establishment != null) {
-                    DetailsScreen(establishment, Modifier.padding(padding), navController)
+                if (establishment != null && viewModel != null) {
+                    DetailsScreen(establishment, viewModel, Modifier.padding(padding), navController)
                 }
             }
         }
 
         composable("reserves") {
-            MainLayout(navController, title = "Reservas") { padding ->
-                ReservesScreen(Modifier.padding(padding), navController)
+            if (viewModel != null) {
+                MainLayout(navController, title = "Reservas") { padding ->
+                    ReservesScreen(viewModel, Modifier.padding(padding), navController)
+                }
             }
         }
 

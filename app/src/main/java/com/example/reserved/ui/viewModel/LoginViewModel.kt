@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.reserved.data.repository.AuthRepository
-import com.example.reserved.data.repository.UserRepository
+import com.example.reserved.data.repository.AccountRepository
 import com.example.reserved.data.session.SessionManager
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -20,7 +20,7 @@ class LoginViewModel : ViewModel() {
     var isLoading = mutableStateOf(false)
 
     private val authRepository = AuthRepository()
-    private var userRepository: UserRepository? = null
+    private var accountRepository: AccountRepository? = null
 
     fun onLoginClick(onSuccess: (String) -> Unit) {
         viewModelScope.launch {
@@ -36,11 +36,9 @@ class LoginViewModel : ViewModel() {
                         val userId = getUserIdFromToken(user.token)
                         if (userId != null) {
                             SessionManager.userId = userId.toLong()
-                        } else {
-                            // Manejar error: no se pudo extraer userId del token
                         }
 
-                        userRepository = UserRepository(user.token) // Aquí creas repo con token
+                        accountRepository = AccountRepository(user.token)
 
                         onSuccess(user.token)
                     } else {
@@ -59,20 +57,16 @@ class LoginViewModel : ViewModel() {
 
     fun getUserIdFromToken(token: String): Int? {
         try {
-            // El token tiene 3 partes separadas por '.': header.payload.signature
             val parts = token.split(".")
             if (parts.size < 2) return null
 
             val payload = parts[1]
 
-            // Decodificar base64 URL-safe (sin relleno '=')
             val decodedBytes = Base64.decode(payload, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)
             val decodedPayload = String(decodedBytes)
 
-            // Parsear JSON para obtener userId (puede variar el nombre del campo, por ejemplo "user_id" o "usuario_id")
             val jsonObject = JSONObject(decodedPayload)
 
-            // Cambia "user_id" por el nombre real que tienes en tu token
             return jsonObject.optInt("user_id", -1).takeIf { it != -1 }
         } catch (e: Exception) {
             e.printStackTrace()

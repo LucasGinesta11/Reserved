@@ -1,4 +1,4 @@
-package com.example.reserved.data.remote.utils
+package com.example.reserved.data.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,6 +7,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.tasks.await
 
+// Obtener localizacion actual
 object LocationUtils {
 
     private var fusedLocationClient: FusedLocationProviderClient? = null

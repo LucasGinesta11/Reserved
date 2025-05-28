@@ -39,7 +39,6 @@ fun LoginScreen(
     onLoginSuccess: (String) -> Unit,
     viewModel: LoginViewModel = viewModel()
 ) {
-    // Asumiendo que los valores en el ViewModel son MutableState o StateFlow:
     val username by viewModel.username
     val password by viewModel.password
     val passwordVisible by viewModel.passwordVisible

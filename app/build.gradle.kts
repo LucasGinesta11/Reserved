@@ -59,27 +59,24 @@ dependencies {
     // Coil para imágenes
     implementation("io.coil-kt:coil-compose:2.4.0")
 
-    // Lifecycle (ViewModel, LiveData, etc)
+    // Lifecycle (ViewModel)
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-
-    // Para usar viewModel() en Jetpack Compose
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
     // Navegacion
     implementation ("androidx.navigation:navigation-compose:2.5.3")
 
     // Compose Material 3
-    implementation ("androidx.compose.material3:material3:1.1.0")  // Ajusta versión si tienes otra
+    implementation ("androidx.compose.material3:material3:1.1.0")
 
-    // Icons for Material
+    // Iconos
     implementation ("androidx.compose.material:material-icons-extended:1.4.3")
 
+    // Servicios Google Play
     implementation ("com.google.android.gms:play-services-location:21.0.1")
 
     // Corrutinas
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

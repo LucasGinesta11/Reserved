@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.reserved.data.repository.AuthRepository
-import com.example.reserved.data.repository.UserRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
@@ -19,16 +19,9 @@ class RegisterViewModel : ViewModel() {
 
     private val authRepository = AuthRepository()
 
-    fun onRegisterClick() {
+    fun onRegisterClick(onNavigateToLogin: () -> Unit) {
         if (username.value.isBlank() || password.value.isBlank() || email.value.isBlank()) {
             errorMessage.value = "Por favor, rellena todos los campos obligatorios"
-            successMessage.value = null
-            return
-        }
-
-        val phoneInt = phone.value.toIntOrNull()
-        if (phone.value.isNotBlank() && phoneInt == null) {
-            errorMessage.value = "Teléfono inválido"
             successMessage.value = null
             return
         }
@@ -43,11 +36,14 @@ class RegisterViewModel : ViewModel() {
                     username = username.value,
                     password = password.value,
                     email = email.value,
-                    phone = phoneInt ?: 0
+                    phone = phone.value
                 )
                 if (response.isSuccessful) {
-                    // Agregar Toast
+                    successMessage.value = "Registro exitoso. Redirigiendo a login..."
                     errorMessage.value = null
+
+                    delay(2000)
+                    onNavigateToLogin()
                 } else {
                     errorMessage.value = "Error al registrar: ${response.code()} ${response.message()}"
                     successMessage.value = null

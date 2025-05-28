@@ -2,10 +2,10 @@ package com.example.reserved.ui.viewModel.user
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.reserved.data.repository.UserRepository
+import com.example.reserved.data.repository.AccountRepository
 
 class UserViewModelFactory(
-    private val repository: UserRepository
+    private val repository: AccountRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(UserViewModel::class.java)) {

@@ -3,11 +3,11 @@ package com.example.reserved.ui.viewModel.user
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.reserved.data.repository.UserRepository
+import com.example.reserved.data.repository.AccountRepository
 import kotlinx.coroutines.launch
 
 class UserViewModel(
-    private val repository: UserRepository
+    private val repository: AccountRepository
 ) : ViewModel() {
 
     fun changeUsername(userId: Long, newUsername: String, onResult: (Boolean) -> Unit) {

@@ -1,3 +1,3 @@
-package com.example.reserved.data.remote.request
+package com.example.reserved.data.remote.dto.request
 
 data class LoginRequest(val username: String, val password: String)

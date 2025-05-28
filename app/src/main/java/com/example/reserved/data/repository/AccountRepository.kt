@@ -1,14 +1,14 @@
 package com.example.reserved.data.repository
 
 import android.util.Log
-import com.example.reserved.data.remote.network.RetrofitInstance
-import com.example.reserved.data.remote.request.UpdatePasswordRequest
-import com.example.reserved.data.remote.request.UpdateUsernameRequest
-import com.example.reserved.data.remote.response.AuthResponse
+import com.example.reserved.data.remote.RetrofitInstance
+import com.example.reserved.data.remote.dto.request.UpdatePasswordRequest
+import com.example.reserved.data.remote.dto.request.UpdateUsernameRequest
+import com.example.reserved.data.remote.dto.response.AuthResponse
 import com.example.reserved.data.session.SessionManager.userId
 import retrofit2.Response
 
-class UserRepository(private val token: String) {
+class AccountRepository(private val token: String) {
     private val api = RetrofitInstance.getApi(token)
 
     suspend fun updateUserName(id: Long, newName: String): Response<AuthResponse> {

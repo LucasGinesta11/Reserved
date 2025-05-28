@@ -66,13 +66,11 @@ fun AccountSection(
 
     if (showPasswordDialog) {
         ChangePassword(
-            currentPassword = currentPassword,
-            onCurrentPasswordChange = { currentPassword = it },
             newPassword = newPassword,
             onNewPasswordChange = { newPassword = it },
             onConfirm = {
                 userId?.let {
-                    userViewModel?.changePassword(it, currentPassword) { success ->
+                    userViewModel?.changePassword(it, newPassword) { success ->
                         Toast.makeText(
                             context,
                             if (success) "Contraseña actualizada" else "Error",
@@ -81,12 +79,10 @@ fun AccountSection(
                     }
                 }
                 showPasswordDialog = false
-                currentPassword = ""
                 newPassword = ""
             },
             onDismiss = {
                 showPasswordDialog = false
-                currentPassword = ""
                 newPassword = ""
             }
         )

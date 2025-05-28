@@ -56,7 +56,6 @@ fun MainLayout(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            // Tu drawer actual sin cambios
             ModalDrawerSheet {
                 Text(
                     "Opciones",
@@ -102,7 +101,6 @@ fun MainLayout(
                         }
                     },
                     actions = {
-                        // Solo mostramos filtro en home (y luego lo haremos en reserves y favorites)
                         if (currentRoute == "home") {
                             IconButton(onClick = { filterMenuExpanded = true }) {
                                 Icon(

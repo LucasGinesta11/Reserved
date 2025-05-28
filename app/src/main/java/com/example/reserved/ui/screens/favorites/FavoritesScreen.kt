@@ -19,7 +19,10 @@ fun FavoritesScreen(viewModel: EstablishmentViewModel, modifier: Modifier, navCo
 
     when (state) {
         is EstablishmentUiState.Success -> {
-            val favorites = (state as EstablishmentUiState.Success).establishments.filter { it.isFavorite }
+            val favorites = (state as EstablishmentUiState.Success)
+                .establishments
+                .filter { it.isFavorite }
+                .sortedByDescending { it.id }
             LazyColumn(modifier = modifier) {
                 items(favorites) { establishment ->
                     EstablishmentCard(establishment, navController, viewModel)

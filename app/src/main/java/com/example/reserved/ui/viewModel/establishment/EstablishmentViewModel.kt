@@ -2,7 +2,10 @@ package com.example.reserved.ui.viewModel.establishment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.reserved.data.remote.dto.request.RatingRequest
+import com.example.reserved.data.remote.dto.request.ReserveRequest
 import com.example.reserved.data.repository.EstablishmentRepository
+import com.example.reserved.data.session.SessionManager
 import com.example.reserved.ui.state.EstablishmentUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,8 +22,17 @@ class EstablishmentViewModel(
     private val _state = MutableStateFlow<EstablishmentUiState>(EstablishmentUiState.Loading)
     val state: StateFlow<EstablishmentUiState> = _state
 
+    private val _reserves = MutableStateFlow<List<ReserveRequest>>(emptyList())
+    val reserves: StateFlow<List<ReserveRequest>> = _reserves
+
+    private val _ratings = MutableStateFlow<List<RatingRequest>>(emptyList())
+    val ratings: StateFlow<List<RatingRequest>> = _ratings
+
+
+
     init {
         getEstablishments()
+        getReserves()
     }
 
     private fun getEstablishments() {
@@ -31,7 +43,7 @@ class EstablishmentViewModel(
                 val establishments = repository.getAllEstablishments()
 
                 val favorites = try {
-                    repository.getFavorites().map { it.establishment_id.toLong() }
+                    repository.getFavorites().map { it.establishmentId.toLong() }
                 } catch (e: Exception) {
                     e.printStackTrace()
                     emptyList()
@@ -50,26 +62,77 @@ class EstablishmentViewModel(
         }
     }
 
-    fun toggleFavorite(establishmentId: Long) {
+    fun toggleFavorite(establishment_id: Long) {
+        val user_id = SessionManager.userId
         val currentState = _state.value
         if (currentState is EstablishmentUiState.Success) {
             val updated = currentState.establishments.map {
-                if (it.id == establishmentId) it.copy(isFavorite = !it.isFavorite)
+                if (it.id == establishment_id) it.copy(isFavorite = !it.isFavorite)
                 else it
             }
             _state.value = EstablishmentUiState.Success(updated)
 
             viewModelScope.launch {
                 try {
-                    val isNowFavorite = updated.first { it.id == establishmentId }.isFavorite
+                    val isNowFavorite = updated.first { it.id == establishment_id }.isFavorite
                     if (isNowFavorite) {
-                        repository.addFavorite(establishmentId.toInt())
+                        user_id?.let {
+                            repository.addFavorite(it, establishment_id)
+                        }
                     } else {
-                        repository.removeFavorite(establishmentId.toInt())
+                        user_id?.let {
+                            repository.removeFavorite(it, establishment_id)
+                        }
                     }
                 } catch (e: Exception) {
                     e.message
                 }
+            }
+        }
+    }
+
+    fun getReserves() {
+        viewModelScope.launch {
+            try {
+                _reserves.value = repository.getReserves()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun createReserve(establishmentId: Long) {
+        val userId = SessionManager.userId ?: return
+        viewModelScope.launch {
+            try {
+                repository.addReserve(userId, establishmentId)
+                getReserves()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun loadRatings(establishmentId: Long) {
+        viewModelScope.launch {
+            try {
+                val allRatings = repository.getRatings()
+                _ratings.value = allRatings.filter { it.establishmentId == establishmentId }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _ratings.value = emptyList()
+            }
+        }
+    }
+
+    fun submitRating(establishmentId: Long, rating: Double, comment: String) {
+        val userId = SessionManager.userId ?: return
+        viewModelScope.launch {
+            try {
+                repository.addRating(userId, establishmentId, rating, comment)
+                loadRatings(establishmentId)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -104,7 +167,7 @@ class EstablishmentViewModel(
         lat1: Double, lon1: Double,
         lat2: Double, lon2: Double
     ): Double {
-        val R = 6371e3 // radio Tierra en metros
+        val R = 6371e3
         val phi1 = Math.toRadians(lat1)
         val phi2 = Math.toRadians(lat2)
         val deltaPhi = Math.toRadians(lat2 - lat1)

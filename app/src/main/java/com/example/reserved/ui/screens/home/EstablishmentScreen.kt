@@ -90,7 +90,6 @@ fun EstablishmentScreen(viewModel: EstablishmentViewModel, modifier: Modifier, n
     }
 }
 
-
 @Composable
 fun EstablishmentCard(
     establishment: Establishment,
