@@ -113,32 +113,41 @@ fun DetailsScreen(
                     .padding(top = 16.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
+                val buttonModifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 8.dp)
+
+                val shape = RoundedCornerShape(12.dp)
+                val fontSize = 14.sp
+
                 Button(
                     onClick = {
                         showRatingDialog = true
                         viewModel.loadRatings(establishment.id)
                     },
-                    modifier = Modifier
-                        .padding(16.dp),
-                    shape = RoundedCornerShape(16.dp),
+                    modifier = buttonModifier,
+                    shape = shape
                 ) {
-                    Text("Valorar", fontSize = 24.sp, color = MaterialTheme.colorScheme.onPrimary)
+                    Text("Valorar", fontSize = fontSize)
                 }
 
                 Button(
                     onClick = { showDialog = true },
-                    shape = RoundedCornerShape(10.dp)
+                    modifier = buttonModifier,
+                    shape = shape
                 ) {
-                    Text("Reservar")
+                    Text("Reservar", fontSize = fontSize)
                 }
 
                 Button(
                     onClick = { navController.popBackStack() },
-                    shape = RoundedCornerShape(10.dp)
+                    modifier = buttonModifier,
+                    shape = shape
                 ) {
-                    Text("Volver")
+                    Text("Volver", fontSize = fontSize)
                 }
             }
+
         }
     }
 
