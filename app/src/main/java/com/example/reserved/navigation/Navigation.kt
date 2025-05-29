@@ -1,5 +1,7 @@
 package com.example.reserved.navigation
 
+import android.Manifest
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
@@ -7,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -14,10 +17,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.reserved.data.session.SessionManager
-import com.example.reserved.data.utils.LocationUtils
+import com.example.reserved.data.repository.AccountRepository
 import com.example.reserved.data.repository.EstablishmentRepository
 import com.example.reserved.data.repository.SelectedEstablishment
+import com.example.reserved.data.session.SessionManager
+import com.example.reserved.data.utils.LocationUtils
 import com.example.reserved.ui.MainLayout
 import com.example.reserved.ui.screens.details.DetailsScreen
 import com.example.reserved.ui.screens.favorites.FavoritesScreen
@@ -26,13 +30,9 @@ import com.example.reserved.ui.screens.login.LoginScreen
 import com.example.reserved.ui.screens.register.RegisterScreen
 import com.example.reserved.ui.screens.reserves.ReservesScreen
 import com.example.reserved.ui.screens.settings.SettingsScreen
+import com.example.reserved.ui.viewModel.LoginViewModel
 import com.example.reserved.ui.viewModel.establishment.EstablishmentViewModel
 import com.example.reserved.ui.viewModel.establishment.EstablishmentViewModelFactory
-import com.example.reserved.ui.viewModel.LoginViewModel
-import android.Manifest
-import android.util.Log
-import androidx.compose.runtime.rememberCoroutineScope
-import com.example.reserved.data.repository.AccountRepository
 import com.example.reserved.ui.viewModel.user.UserViewModel
 import com.example.reserved.ui.viewModel.user.UserViewModelFactory
 import kotlinx.coroutines.launch
@@ -138,7 +138,12 @@ fun Navigation() {
             MainLayout(navController, title = "Detalles") { padding ->
                 val establishment = SelectedEstablishment.current
                 if (establishment != null && viewModel != null) {
-                    DetailsScreen(establishment, viewModel, Modifier.padding(padding), navController)
+                    DetailsScreen(
+                        establishment,
+                        viewModel,
+                        Modifier.padding(padding),
+                        navController
+                    )
                 }
             }
         }

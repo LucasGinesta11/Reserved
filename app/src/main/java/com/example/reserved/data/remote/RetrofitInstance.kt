@@ -7,15 +7,20 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
+    // Localhost: 10.0.2.2
+    private const val BASE_URL =
+        "http://reserved-env.eba-pr3h34mr.us-east-1.elasticbeanstalk.com:8080/"
 
-    private  const val BASE_URL = "http://reserved-env.eba-pr3h34mr.us-east-1.elasticbeanstalk.com:8080/"
-    // Localhost: http://10.0.2.2:8080/
+    private var client = buildClient()
+    private var retrofit = buildRetrofit()
 
-    private fun getRetrofitInstance(token: String? = null): Retrofit {
-        val client = OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(token))
+    private fun buildClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor())
             .build()
+    }
 
+    private fun buildRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
@@ -23,7 +28,12 @@ object RetrofitInstance {
             .build()
     }
 
-    fun getApi(token: String? = null): ReservedApi {
-        return getRetrofitInstance(token).create(ReservedApi::class.java)
+    fun getApi(): ReservedApi {
+        return retrofit.create(ReservedApi::class.java)
+    }
+
+    fun reset() {
+        client = buildClient()
+        retrofit = buildRetrofit()
     }
 }

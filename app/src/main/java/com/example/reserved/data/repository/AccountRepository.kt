@@ -9,7 +9,7 @@ import com.example.reserved.data.session.SessionManager.userId
 import retrofit2.Response
 
 class AccountRepository(private val token: String) {
-    private val api = RetrofitInstance.getApi(token)
+    private val api = RetrofitInstance.getApi()
 
     suspend fun updateUserName(id: Long, newName: String): Response<AuthResponse> {
         val request = UpdateUsernameRequest(newName)

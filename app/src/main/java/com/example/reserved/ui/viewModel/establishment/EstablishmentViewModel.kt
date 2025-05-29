@@ -1,5 +1,6 @@
 package com.example.reserved.ui.viewModel.establishment
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.reserved.data.remote.dto.request.RatingRequest
@@ -62,26 +63,26 @@ class EstablishmentViewModel(
         }
     }
 
-    fun toggleFavorite(establishment_id: Long) {
-        val user_id = SessionManager.userId
+    fun toggleFavorite(establishmentId: Long) {
+        val userId = SessionManager.userId
         val currentState = _state.value
         if (currentState is EstablishmentUiState.Success) {
             val updated = currentState.establishments.map {
-                if (it.id == establishment_id) it.copy(isFavorite = !it.isFavorite)
+                if (it.id == establishmentId) it.copy(isFavorite = !it.isFavorite)
                 else it
             }
             _state.value = EstablishmentUiState.Success(updated)
 
             viewModelScope.launch {
                 try {
-                    val isNowFavorite = updated.first { it.id == establishment_id }.isFavorite
+                    val isNowFavorite = updated.first { it.id == establishmentId }.isFavorite
                     if (isNowFavorite) {
-                        user_id?.let {
-                            repository.addFavorite(it, establishment_id)
+                        userId?.let {
+                            repository.addFavorite(it, establishmentId)
                         }
                     } else {
-                        user_id?.let {
-                            repository.removeFavorite(it, establishment_id)
+                        userId?.let {
+                            repository.removeFavorite(it, establishmentId)
                         }
                     }
                 } catch (e: Exception) {
@@ -102,7 +103,12 @@ class EstablishmentViewModel(
     }
 
     fun createReserve(establishmentId: Long) {
-        val userId = SessionManager.userId ?: return
+        val userId = SessionManager.userId
+        if (userId == null) {
+            Log.e("EstablishmentViewModel", "UserId is null, cannot create reserve")
+            return
+        }
+        Log.d("EstablishmentViewModel", "Creating reserve for userId=$userId, establishmentId=$establishmentId")
         viewModelScope.launch {
             try {
                 repository.addReserve(userId, establishmentId)
@@ -112,6 +118,7 @@ class EstablishmentViewModel(
             }
         }
     }
+
 
     fun loadRatings(establishmentId: Long) {
         viewModelScope.launch {
@@ -184,4 +191,9 @@ class EstablishmentViewModel(
         return distance
     }
 
+    fun clearData() {
+        _state.value = EstablishmentUiState.Loading
+        _reserves.value = emptyList()
+        _ratings.value = emptyList()
+    }
 }

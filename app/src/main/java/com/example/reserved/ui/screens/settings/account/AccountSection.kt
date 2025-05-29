@@ -24,7 +24,6 @@ fun AccountSection(
     val userId = SessionManager.userId
 
     var showPasswordDialog by remember { mutableStateOf(false) }
-    var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
 
     SectionTitle("Cuenta")

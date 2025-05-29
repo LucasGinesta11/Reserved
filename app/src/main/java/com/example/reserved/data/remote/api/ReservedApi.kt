@@ -20,12 +20,15 @@ import retrofit2.http.Query
 
 interface ReservedApi {
 
-    // Login / Register
+    // Login, Logout y Register
     @POST("/reserved/login")
     suspend fun login(@Body loginRequest: LoginRequest): Response<AuthResponse>
 
     @POST("/reserved/register")
     suspend fun register(@Body registerRequest: RegisterRequest): Response<AuthResponse>
+
+//    @POST("/reserved/logout")
+//    suspend fun logout(): Response<Unit>
 
 
     // Establishments
@@ -82,4 +85,3 @@ interface ReservedApi {
         @Body ratingRequest: RatingRequest
     )
 }
-

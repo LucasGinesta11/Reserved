@@ -33,15 +33,19 @@ class LoginViewModel : ViewModel() {
 
                     if (user != null && user.token.isNotBlank()) {
                         SessionManager.token = user.token
+
                         val userId = getUserIdFromToken(user.token)
                         if (userId != null) {
                             SessionManager.userId = userId.toLong()
                         }
 
+                        com.example.reserved.data.remote.RetrofitInstance.reset()
+
                         accountRepository = AccountRepository(user.token)
 
                         onSuccess(user.token)
-                    } else {
+                    }
+                    else {
                         errorMessage.value = "Error en datos de usuario"
                     }
                 } else {
@@ -55,6 +59,7 @@ class LoginViewModel : ViewModel() {
         }
     }
 
+
     fun getUserIdFromToken(token: String): Int? {
         try {
             val parts = token.split(".")
@@ -67,10 +72,18 @@ class LoginViewModel : ViewModel() {
 
             val jsonObject = JSONObject(decodedPayload)
 
-            return jsonObject.optInt("user_id", -1).takeIf { it != -1 }
+            return jsonObject.optInt("userId", -1).takeIf { it != -1 }
         } catch (e: Exception) {
             e.printStackTrace()
             return null
         }
+    }
+
+    fun clearData() {
+        username.value = ""
+        password.value = ""
+        passwordVisible.value = false
+        errorMessage.value = null
+        isLoading.value = false
     }
 }

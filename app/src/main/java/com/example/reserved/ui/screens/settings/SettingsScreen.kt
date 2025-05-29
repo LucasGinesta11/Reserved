@@ -8,6 +8,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.reserved.ui.screens.settings.account.AccountSection
+import com.example.reserved.ui.screens.settings.notifications.NotificationsSection
+import com.example.reserved.ui.screens.settings.preferences.PreferencesSection
+import com.example.reserved.ui.screens.settings.security.SecuritySection
+import com.example.reserved.ui.screens.settings.support.SupportSection
 import com.example.reserved.ui.viewModel.user.UserViewModel
 
 @Composable
@@ -25,7 +29,7 @@ fun SettingsScreen(
         }
 
         item {
-            PreferencesSection(navController = navController)
+            PreferencesSection()
         }
         item {
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))

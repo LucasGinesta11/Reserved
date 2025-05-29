@@ -7,7 +7,7 @@ import com.example.reserved.data.remote.dto.request.RatingRequest
 import com.example.reserved.data.remote.dto.request.ReserveRequest
 
 class EstablishmentRepository(token: String?) {
-    private val api = RetrofitInstance.getApi(token)
+    private val api = RetrofitInstance.getApi()
 
     // Establishment
     suspend fun getAllEstablishments(): List<Establishment> {

@@ -30,6 +30,11 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import com.example.reserved.data.remote.RetrofitInstance
+import com.example.reserved.data.repository.AuthRepository
+import com.example.reserved.data.session.SessionManager
+import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,6 +50,7 @@ fun MainLayout(
     val scope = rememberCoroutineScope()
     val currentBackStackEntry = navController.currentBackStackEntryAsState().value
     val currentRoute = currentBackStackEntry?.destination?.route ?: ""
+    val tokenState = rememberSaveable { mutableStateOf(SessionManager.token) }
 
     if (currentRoute == "login" || currentRoute == "register") {
         content(PaddingValues())
@@ -52,6 +58,20 @@ fun MainLayout(
     }
 
     var filterMenuExpanded by remember { mutableStateOf(false) }
+
+    fun logout() {
+        SessionManager.clear()
+        RetrofitInstance.reset()
+
+        // Navegación: limpiar todo el backstack
+        navController.navigate("login") {
+            popUpTo(0) { inclusive = true } // Mata todo el grafo de navegación
+            launchSingleTop = true
+        }
+    }
+
+
+
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -68,7 +88,7 @@ fun MainLayout(
                     "Reservas" to "reserves",
                     "Favoritos" to "favorites",
                     "Ajustes" to "settings",
-                    "Cerrar sesión" to "login"
+                    "Cerrar sesión" to "logout"
                 )
 
                 items.forEach { (label, route) ->
@@ -76,14 +96,20 @@ fun MainLayout(
                         label = { Text(label) },
                         selected = currentRoute == route,
                         onClick = {
-                            navController.navigate(route) {
-                                popUpTo(navController.graph.startDestinationId) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
+                            if (route == "logout") {
+                                logout() // ✅ ahora sin parámetros
+                            } else {
+                                navController.navigate(route) {
+                                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
                         }
+
                     )
                 }
+
             }
         }
     ) {
@@ -147,3 +173,5 @@ fun MainLayout(
         }
     }
 }
+
+
